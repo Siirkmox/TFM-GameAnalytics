@@ -1,0 +1,34 @@
+# Extracción Firebase (sin SDK completo — solo autenticación JWT)
+cryptography
+google-auth
+
+# Datos
+pandas
+numpy
+
+# Visualización
+matplotlib
+seaborn
+plotly
+wordcloud
+
+# Estadística
+scipy
+statsmodels
+
+# Machine Learning
+scikit-learn
+xgboost
+optuna
+
+# NLP
+transformers
+torch
+
+# Notebooks e informe
+jupyter
+nbconvert
+
+# Utilidades
+python-dotenv
+openpyxl

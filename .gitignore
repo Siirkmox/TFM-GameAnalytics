@@ -1,0 +1,25 @@
+# Credenciales — NUNCA subir al repo
+.env
+credentials/
+*.json
+
+# Datos brutos y procesados (pueden ser grandes)
+data/raw/
+data/processed/
+data/exports/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Reports generados
+reports/*.html
+reports/*.pdf
+reports/figures/
