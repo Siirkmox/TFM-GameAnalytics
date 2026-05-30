@@ -23,3 +23,13 @@ venv/
 reports/*.html
 reports/*.pdf
 reports/figures/
+
+# Scripts de parche temporales
+_fix_*.py
+_patch_*.py
+_regen_*.py
+_rebuild_*.py
+
+# Modelos entrenados (binarios grandes)
+models/*.pkl
+models/*.joblib

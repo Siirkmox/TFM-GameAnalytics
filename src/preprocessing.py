@@ -26,6 +26,29 @@ DYNAMIC_PREFIXES = ['kills', 'killedWith', 'cast', 'miss', 'blocked', 'damage', 
 # Columnas estáticas de sala (no dinámicas)
 ROOM_STATIC_COLS = ['sessionId', 'levelId', 'roomId', 'timeSecs', 'deaths', 'damageTaken', 'firstSpell']
 
+# Normalización de nombres históricos killedWith_* → nombres canónicos post-fix
+# Permite coexistencia de sesiones pre-fix y post-fix en el mismo parquet.
+# El elemento se mantiene via playerElement de la sesión (join rooms ↔ sessions).
+KILLEDWITH_RENAME = {
+    # Projectile (nombres por elemento → canónico)
+    'killedWith_Fireball':             'killedWith_Projectile',
+    'killedWith_StoneBullet':          'killedWith_Projectile',
+    'killedWith_WaterballProjectile':  'killedWith_Projectile',
+    'killedWith_WindBulletProjectile': 'killedWith_Projectile',
+    # Blast
+    'killedWith_FireBlast':            'killedWith_Blast',
+    'killedWith_FireBlast_(1)':        'killedWith_Blast',
+    'killedWith_WaterBlast':           'killedWith_Blast',
+    'killedWith_WindBlast':            'killedWith_Blast',
+    'killedWith_Particle_System':      'killedWith_Blast',   # Earth Blast pre-fix (bug collider)
+    # AOE
+    'killedWith_EarthSlamSpikesAoe':   'killedWith_AOE',
+    'killedWith_WaterAoeBody':         'killedWith_AOE',
+    'killedWith_WindAoe':              'killedWith_AOE',
+    # Beam
+    'killedWith_BeamBody':             'killedWith_Beam',
+}
+
 
 # ─── Carga ───────────────────────────────────────────────────────────────────
 
@@ -128,6 +151,29 @@ def flatten_rooms(sessions: list[dict]) -> pd.DataFrame:
     # Rellenar NaN en columnas dinámicas con 0
     dynamic_cols = [c for c in df.columns if _is_dynamic(c)]
     df[dynamic_cols] = df[dynamic_cols].fillna(0)
+
+    # Normalizar nombres killedWith_* históricos → canónicos
+    df = normalize_killedwith(df)
+
+    return df
+
+
+def normalize_killedwith(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Unifica nombres killedWith_* históricos (pre-fix Unity) con los canónicos (post-fix).
+    Columnas con el mismo nombre canónico se suman (para coexistencia pre/post fix).
+    El elemento del jugador se mantiene via playerElement de la sesión — no se pierde
+    información porque cada sesión pertenece a un único playerElement.
+    """
+    cols_a_renombrar = {old: new for old, new in KILLEDWITH_RENAME.items() if old in df.columns}
+
+    for old_col, new_col in cols_a_renombrar.items():
+        if new_col in df.columns:
+            # Ya existe la columna canónica (sesiones post-fix) → sumar
+            df[new_col] = df[new_col] + df[old_col]
+        else:
+            df[new_col] = df[old_col]
+        df = df.drop(columns=[old_col])
 
     return df
 

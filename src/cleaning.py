@@ -17,8 +17,9 @@ import numpy as np
 
 # ─── Umbrales de limpieza ────────────────────────────────────────────────────
 
-# Sesiones más cortas que esto probablemente son pruebas o errores
-MIN_TIME_SECS = 30
+# Sesiones más cortas que esto no tienen gameplay real (< 1 sala completa)
+# Solo sirven para calcular churn rate, no para análisis de balance
+MIN_TIME_SECS = 120
 
 # Sesiones más largas que esto son outliers claros (AFK, juego pausado, etc.)
 MAX_TIME_SECS = 3600
@@ -34,6 +35,7 @@ def flag_suspicious_sessions(df: pd.DataFrame) -> pd.DataFrame:
     Añade (o recalcula) la columna `is_suspicious` en df_sessions.
 
     Criterios:
+      - platform == 'Editor'           → sesión de desarrollo, no de tester real
       - totalTimeSecs < MIN_TIME_SECS  → sesión muy corta (probable prueba)
       - totalTimeSecs > MAX_TIME_SECS  → sesión muy larga (probable AFK/outlier)
       - totalKills == 0 AND levelsCompleted == 0  → sin actividad real
@@ -46,11 +48,13 @@ def flag_suspicious_sessions(df: pd.DataFrame) -> pd.DataFrame:
     """
     df = df.copy()
 
+    # Sesiones desde el editor Unity son de desarrollo, no de testers reales
+    mask_editor  = df['platform'] == 'Editor' if 'platform' in df.columns else pd.Series(False, index=df.index)
     mask_short   = df['totalTimeSecs'] < MIN_TIME_SECS
     mask_long    = df['totalTimeSecs'] > MAX_TIME_SECS
     mask_no_activity = (df['totalKills'] == 0) & (df['levelsCompleted'] == 0)
 
-    df['is_suspicious'] = mask_short | mask_long | mask_no_activity
+    df['is_suspicious'] = mask_editor | mask_short | mask_long | mask_no_activity
 
     return df
 

@@ -32,3 +32,11 @@ nbconvert
 # Utilidades
 python-dotenv
 openpyxl
+
+# Dashboard
+streamlit
+
+# IA Generativa — Agente de análisis de balance
+langchain-google-genai
+langgraph
+langchain-core
