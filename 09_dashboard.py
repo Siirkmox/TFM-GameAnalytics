@@ -1514,9 +1514,20 @@ with tab_ml:
 
     # Clustering
     st.subheader("Perfiles de jugador — K-Means clustering")
+    # Silhouette dinámico para no quedar desactualizado si cambian los datos o features
+    try:
+        from sklearn.metrics import silhouette_score
+        from sklearn.preprocessing import StandardScaler
+        _feats_sil = [c for c in ["kd_ratio","kills_per_min","time_per_level","cast_accuracy","totalCast","totalDeaths"] if c in cls.columns]
+        _X_sil = StandardScaler().fit_transform(cls[_feats_sil].fillna(0))
+        _sil = silhouette_score(_X_sil, cls["cluster"]) if cls["cluster"].nunique() > 1 else 0.0
+    except Exception:
+        _sil = float("nan")
+    _k_real = int(cls["cluster"].nunique())
+    _n_cls = int(len(cls))
     st.caption(
-        "Agrupación exploratoria (K-Means, k=6) de sesiones por métricas de combate. "
-        "Con n=34 sesiones y Silhouette=0.25 los clusters son orientativos, no definitivos. "
+        f"Agrupación exploratoria (K-Means, k={_k_real}) de sesiones por métricas de combate. "
+        f"Con n={_n_cls} sesiones y Silhouette={_sil:.3f} los clusters son orientativos, no definitivos. "
         "El objetivo es identificar si existe un perfil de jugador ganador independiente del elemento elegido."
     )
 
