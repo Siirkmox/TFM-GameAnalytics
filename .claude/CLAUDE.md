@@ -8,7 +8,8 @@ para generar recomendaciones de balanceo del juego.
 
 - **No añadir Co-Authored-By de Claude** en los commits de este proyecto.
   Los commits deben ir firmados únicamente con el autor humano (`Siirkmox`).
-- Rama principal: `main`
+- Rama principal: `master`
+- Repositorio: https://github.com/Siirkmox/TFM-GameAnalytics
 - Nunca subir a git: credenciales, `.env`, `data/raw/`, `data/processed/`
 
 ## Estructura del proyecto
@@ -74,8 +75,8 @@ Credenciales: `credentials/firebase-service-account.json` (no subir a git).
 
 Estado actual de datos (actualizar con cada extracción):
 - Sesiones: 52 | Niveles: 104 | Salas: 519
-- Elementos (WebGL válidas): Fire×11, Water×9, Wind×7, Earth×7
-- Victorias: 10/34 WebGL válidas (29.4%)
+- Elementos (WebGL limpias, n=34): Fire×11, Water×9, Wind×7, Earth×7
+- Victorias: 10/34 WebGL limpias (29.4%)
 - Plataformas: WebGL×47, Editor×5
 - Versión de juego: 0.1
 
