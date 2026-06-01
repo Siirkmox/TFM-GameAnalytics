@@ -59,12 +59,12 @@ def compute_balance_index(df_sessions: pd.DataFrame,
                           nlp_results: pd.DataFrame,
                           df_rooms: pd.DataFrame = None) -> pd.DataFrame:
     """
-    Balance Index = win_rate × sentiment_score × (1 + kills_efficiency_norm) por elemento.
+    Balance Index = 0.5 × win_rate + 0.3 × kills_efficiency_norm + 0.2 × sentiment_norm por elemento.
 
     - win_rate           : proporción de isVictory por playerElement
-    - sentiment_score    : media de nlp_results por elemento (NaN → 0.5 neutral)
     - kills_efficiency   : si df_rooms disponible, usa killedWith_* (eficiencia real);
                            si no, usa kills_per_min normalizada como fallback
+    - sentiment_norm     : media de nlp_results por elemento normalizada a [0,1] (NaN → 0.5 neutral)
     """
     # Win rate por elemento
     wr = df_sessions.groupby('playerElement')['isVictory'].mean().rename('win_rate')

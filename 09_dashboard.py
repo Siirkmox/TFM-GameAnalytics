@@ -215,7 +215,7 @@ with tab_resumen:
     bi_f = bi[bi["playerElement"].isin(elem_sel)].sort_values("puntuacion_global", ascending=False)
     _pocos = bi_f[~bi_f["datos_suficientes"]]["playerElement"].tolist()
     _aviso = f" ⚠️ {', '.join(_pocos)} tienen n<10 — valores menos fiables." if _pocos else ""
-    st.caption(f"Puntuación global = 0.4 × tasa_victoria + 0.2 × kills/min (norm.) + 0.2 × control de rol (norm.) + 0.2 × sentimiento. Cada elemento tiene un status de rol propio: Fire=Burn, Water=Slow, Earth=Stun, Wind=Knockback.{_aviso}")
+    st.caption(f"Puntuación global = 0.5 × tasa_victoria + 0.3 × kills_efficiency (norm.) + 0.2 × sentimiento. Cada elemento tiene un status de rol propio: Fire=Burn, Water=Slow, Earth=Stun, Wind=Knockback.{_aviso}")
 
     fig_bi = px.bar(
         bi_f, x="playerElement", y="puntuacion_global",
@@ -272,11 +272,10 @@ with tab_resumen:
     _bi_live["_sent_norm"]  = _bi_live["Elemento"].map(_sent_norm).fillna(0.5)
     _bi_live["_vic_norm"]   = (_bi_live["Victoria"] - _bi_live["Victoria"].min()) / (_bi_live["Victoria"].max() - _bi_live["Victoria"].min() + 1e-9)
 
-    # Puntuación global recalculada con nueva fórmula
+    # Puntuación global recalculada — misma fórmula que balance_index.csv: 0.5·wr + 0.3·keff + 0.2·sent
     _bi_live["Puntuación global"] = (
-        0.40 * _bi_live["_vic_norm"] +
-        0.20 * _bi_live["Kills/min (norm.)"] +
-        0.20 * _bi_live["Control rol (norm.)"] +
+        0.50 * _bi_live["_vic_norm"] +
+        0.30 * _bi_live["Kills/min (norm.)"] +
         0.20 * _bi_live["_sent_norm"]
     )
     _bi_live["Fiable"] = _bi_live["Sesiones"].apply(lambda n: "✅" if n >= 10 else "⚠️")
@@ -286,7 +285,7 @@ with tab_resumen:
     _bi_live["Control rol (norm.)"]  = _bi_live["Control rol (norm.)"].map("{:.3f}".format)
     _bi_live["Sentimiento"]          = _bi_live["Sentimiento"].map("{:.2f}".format)
     _bi_live["Puntuación global"]    = _bi_live["Puntuación global"].map("{:.3f}".format)
-    _bi_live = _bi_live[["Elemento","Sesiones","Victoria","Kills/min (norm.)","Control rol (norm.)","Sentimiento","Puntuación global","Fiable"]]
+    _bi_live = _bi_live[["Elemento","Sesiones","Victoria","Kills/min (norm.)","Sentimiento","Puntuación global","Fiable"]]
     st.dataframe(_bi_live, use_container_width=True, hide_index=True, height=230)
     st.caption("⚠️ = n<10 sesiones · Control rol: Fire=Burn, Water=Slow, Earth=Stun, Wind=Knockback — aplicaciones de status / kills totales (norm.)")
 
@@ -697,13 +696,10 @@ with tab_spells:
 
     # ── Datos base ────────────────────────────────────────────────────────────
     _kmap_sp = {
-        "Projectile": ["killedWith_Fireball","killedWith_StoneBullet",
-                       "killedWith_WindBulletProjectile","killedWith_WaterballProjectile"],
-        "Blast":      ["killedWith_FireBlast_(1)","killedWith_FireBlast",
-                       "killedWith_WindBlast","killedWith_WaterBlast"],
-        "Beam":       ["killedWith_BeamBody"],
-        "AOE":        ["killedWith_WindAoe","killedWith_EarthSlamSpikesAoe",
-                       "killedWith_WaterAoeBody","killedWith_Particle_System"],
+        "Projectile": ["killedWith_Projectile"],
+        "Blast":      ["killedWith_Blast"],
+        "Beam":       ["killedWith_Beam"],
+        "AOE":        ["killedWith_AOE"],
     }
     _spell_colors = {"Beam": "#e74c3c", "Projectile": "#1a8fff", "Blast": "#f39c12", "AOE": "#27ae60"}
     _df_sp = rooms_c.merge(clean[["sessionId","playerElement"]], on="sessionId", how="left")
@@ -1520,7 +1516,7 @@ with tab_ml:
     st.subheader("Perfiles de jugador — K-Means clustering")
     st.caption(
         "Agrupación exploratoria (K-Means, k=6) de sesiones por métricas de combate. "
-        "Con n=30 sesiones y Silhouette=0.25 los clusters son orientativos, no definitivos. "
+        "Con n=34 sesiones y Silhouette=0.25 los clusters son orientativos, no definitivos. "
         "El objetivo es identificar si existe un perfil de jugador ganador independiente del elemento elegido."
     )
 
