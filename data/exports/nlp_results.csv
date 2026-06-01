@@ -1,0 +1,8 @@
+sessionId,playerElement,isVictory,sentiment_score,sentiment_stars,dominant_topic,topic_name,comment_length,spam_excluido
+20260513_101932_7540,Wind,True,0.0,1.0,0.0,Bugs / Problemas técnicos,67,False
+20260513_104240_5389,Fire,True,0.5,3.0,0.0,Bugs / Problemas técnicos,256,False
+20260513_180319_6726,Wind,False,0.5,3.0,1.0,Experiencia / Dificultad,242,False
+20260514_095000_2188,Earth,True,0.5,3.0,0.0,Bugs / Problemas técnicos,61,False
+20260530_115651_9890,Earth,True,0.5,3.0,0.0,Bugs / Problemas técnicos,60,False
+20260513_074033_3474,Fire,False,,,,SPAM / Prueba,17,True
+20260513_082947_4162,Water,False,,,,SPAM / Prueba,17,True

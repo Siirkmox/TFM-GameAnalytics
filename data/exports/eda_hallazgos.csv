@@ -1,0 +1,18 @@
+Aspecto,Valor,Observación
+Tasa de victoria,20% (6/30),El juego es difícil — solo 1 de cada 5 sesiones acaba en victoria
+Churn Rate,26.9% (7/26 WebGL),Fire y Water ~40% churn — barrera de entrada elevada en Level1
+Elemento dominante,Fire (16/30 sesiones),Earth y Wind con 4 sesiones — datos insuficientes para balance
+Hechizo más usado,Projectile (3302 cast),Pero el menos eficiente y mayor miss rate — desperdicio masivo de maná
+Hechizo más eficiente,Beam (mayor kills/cast),Muy subutilizado — posible infravaloración por jugadores
+Mayor demanda latente,Blast (mayor noMana),Los jugadores quieren usarlo más — reducir coste de maná
+AOE kills = 0,AOE no registra kills,Bug de telemetría confirmado — kills reales via killedWith_*Aoe
+Daño Unknown,Fuente sin tag,Bug de telemetría — categorizar correctamente en Unity
+Nivel con más grinding,Level1 (attempt máx=14),Mayor tasa de reintento — revisar dificultad inicial
+Sesiones válidas,19/30 para análisis,Editor excluidas (3) + churn excluidos (8) del análisis de balance
+Burn correlaciona victoria,r>0 p<0.05 (status_Burn),Los ganadores aplican ~11x más Burn — daño sostenido es clave
+Boss kills predictor,r≈+0.67 p<0.001,Llegar al Boss y matarlo es la métrica más correlacionada con ganar
+Spike salas 4-5,Daño ~136-129 (2x resto),Pico de dificultad en salas 4-5 — revisar diseño o sesgo de superviviente
+Diversidad hechizos,3.8 tipos vic vs 3.1 der,"Ganadores usan más variedad — p=0.088, casi significativo; añadir al ML"
+RangerCrossbow universal,Top dañino todos elementos,Daño sobreescalado globalmente — ajuste no rompe balance entre elementos
+Hora del día,14h = 100% win (n=2),"Tendencia tarde > mañana — orientativo, confirmar con más sesiones"
+Primera sala predictor,r=-0.35 p=0.067,Menos daño en Room_01/Level1 → tendencia a ganar; casi significativo

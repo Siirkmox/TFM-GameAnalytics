@@ -1,12 +1,13 @@
 # Credenciales — NUNCA subir al repo
 .env
 credentials/
-*.json
+credentials/*.json
+.claude/jira_credentials.json
+.claude/settings.json
 
-# Datos brutos y procesados (pueden ser grandes)
+# Datos brutos y procesados (voluminosos, se regeneran ejecutando los notebooks)
 data/raw/
 data/processed/
-data/exports/
 
 # Python
 __pycache__/
@@ -19,17 +20,12 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# Reports generados
+# Reports generados (se regeneran con el notebook 08)
 reports/*.html
 reports/*.pdf
-reports/figures/
 
 # Scripts de parche temporales
 _fix_*.py
 _patch_*.py
 _regen_*.py
 _rebuild_*.py
-
-# Modelos entrenados (binarios grandes)
-models/*.pkl
-models/*.joblib
