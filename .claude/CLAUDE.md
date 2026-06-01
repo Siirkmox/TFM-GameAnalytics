@@ -34,8 +34,11 @@ Proyecto-TFM-HackAndSlash/
 │   ├── preprocessing.py      ← aplanado jerarquía + columnas derivadas
 │   ├── cleaning.py           ← validación, nulos, outliers
 │   ├── visualization.py      ← plots estandarizados
-│   ├── analysis.py           ← métricas de balance
-│   └── nlp_utils.py          ← sentiment + topic modeling
+│   ├── analysis.py           ← métricas de balance + recomendaciones IA
+│   ├── nlp_utils.py          ← sentiment + topic modeling + análisis Gemini
+│   ├── game_agent.py         ← agente LangGraph con herramientas de consulta
+│   ├── game_tools.py         ← tools LangChain para el agente (9 herramientas)
+│   └── gemini_client.py      ← cliente Gemini con retry y fallback de modelos
 ├── reports/
 │   ├── balance_report.html
 │   └── figures/
