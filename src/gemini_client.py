@@ -11,6 +11,17 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 load_dotenv()
 
+# En Streamlit Cloud no hay .env: los secretos llegan via st.secrets.
+# Los volcamos a os.environ para que el resto del módulo funcione igual en local y en cloud.
+try:
+    import streamlit as _st  # type: ignore
+    for _key in ("GOOGLE_API_KEY", "GOOGLE_API_KEY_2", "GOOGLE_API_KEY_3"):
+        if _key not in os.environ and _key in _st.secrets:
+            os.environ[_key] = _st.secrets[_key]
+except Exception:
+    # Streamlit no instalado o no estamos en su runtime: ignorar silenciosamente
+    pass
+
 # ── API Keys (carga automática igual que Proyecto 7) ─────────────────────────
 _base = os.getenv("GOOGLE_API_KEY")
 GOOGLE_API_KEYS = [_base] if _base else []

@@ -5,9 +5,13 @@ credentials/*.json
 .claude/jira_credentials.json
 .claude/settings.json
 
-# Datos brutos y procesados (voluminosos, se regeneran ejecutando los notebooks)
+# Datos brutos — NUNCA subir (JSON masivos de Firestore)
 data/raw/
-data/processed/
+
+# Datos procesados — JSON brutos no, parquets sí (necesarios para Streamlit Cloud)
+data/processed/*.json
+data/processed/*.csv
+!data/processed/*.parquet
 
 # Python
 __pycache__/
