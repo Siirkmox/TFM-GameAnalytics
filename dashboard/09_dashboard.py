@@ -1,14 +1,23 @@
 """
 09_dashboard.py — Dashboard TFM: Análisis de Balance Hack & Slash
-Ejecución: python -m streamlit run 09_dashboard.py
+Ejecución local: python -m streamlit run dashboard/09_dashboard.py
+Deploy: Streamlit Community Cloud apunta a dashboard/09_dashboard.py
 """
+
+import sys
+from pathlib import Path
+
+# ── Path setup ────────────────────────────────────────────────────────────────
+# El dashboard vive en dashboard/ pero importa de ../src y lee de ../data y ../models.
+# REPO_ROOT apunta a la raíz del repo independientemente de dónde se lance Streamlit.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from pathlib import Path
 from sklearn.metrics import roc_auc_score
 
 # ── Configuración ────────────────────────────────────────────────────────────
@@ -95,7 +104,7 @@ _inject_css()
 PALETTE = {"Fire": "#e74c3c", "Water": "#1a8fff", "Earth": "#8B5E3C", "Wind": "#B0C4DE"}
 PRIO_COLOR = {"Alta": "#f5c6cb", "Media": "#ffeeba", "Baja": "#d4edda"}
 
-BASE    = Path(__file__).parent
+BASE    = REPO_ROOT  # raíz del repo: data/, models/, reports/, src/
 FIGS    = BASE / "reports" / "figures"
 EXPORTS = BASE / "data" / "exports"
 
@@ -399,8 +408,6 @@ with tab_resumen:
     if st.button("📋 Generar resumen ejecutivo", key="btn_exec_summary", type="primary"):
         with st.spinner("Gemini redactando el resumen..."):
             try:
-                import sys as _sys
-                _sys.path.insert(0, str(BASE / "src"))
                 from analysis import generate_executive_summary
                 _bi_for_summary = bi.rename(columns={"puntuacion_global": "balance_index"}) \
                     if "puntuacion_global" in bi.columns else bi
@@ -1875,8 +1882,6 @@ with tab_recs:
     if st.button("Generar recomendaciones IA", key="btn_ai_recs", type="primary"):
         with st.spinner("Gemini analizando los datos..."):
             try:
-                import sys as _sys
-                _sys.path.insert(0, str(BASE / "src"))
                 from analysis import generate_ai_recommendations, compute_killedwith_efficiency
                 try:
                     _spell_eff = compute_killedwith_efficiency(rooms_c, clean)
@@ -1998,8 +2003,6 @@ with tab_ia:
         with st.chat_message("assistant"):
             with st.spinner("Analizando datos..."):
                 try:
-                    import sys as _sys
-                    _sys.path.insert(0, str(BASE / "src"))
                     from game_agent import invocar_agente
                     _respuesta, st.session_state.ia_historial = invocar_agente(
                         _pregunta, st.session_state.ia_historial

@@ -48,16 +48,20 @@ jugables (Fire, Water, Earth, Wind) y generar recomendaciones accionables para e
 │   ├── game_agent.py             # Agente LangGraph con 9 herramientas de consulta
 │   ├── game_tools.py             # Tools LangChain para el agente
 │   └── gemini_client.py          # Cliente Gemini con retry y fallback de modelos
-├── 09_dashboard.py               # Dashboard Streamlit (8 pestañas + agente IA)
+├── dashboard/                    # App Streamlit (deploy en Streamlit Community Cloud)
+│   ├── 09_dashboard.py           # Dashboard (8 pestañas + agente IA)
+│   ├── requirements.txt          # Dependencias mínimas para el deploy (~150 MB)
+│   └── .streamlit/config.toml    # Tema oscuro corporativo
 ├── data/
 │   ├── raw/                      # JSON exportados de Firestore (no en git)
-│   ├── processed/                # Parquets limpios (no en git)
+│   ├── processed/                # Parquets limpios (parquets sí en git, CSVs no)
 │   └── exports/                  # CSVs de resultados finales
 ├── models/                       # Modelos .pkl entrenados
 ├── reports/
 │   ├── balance_report.html       # Informe ejecutivo HTML
 │   └── figures/                  # Todas las figuras generadas
-└── requirements.txt
+├── requirements-dev.txt          # Dependencias completas para notebooks (torch, transformers, optuna...)
+└── README.md
 ```
 
 ---
@@ -67,7 +71,12 @@ jugables (Fire, Water, Earth, Wind) y generar recomendaciones accionables para e
 ```bash
 git clone https://github.com/Siirkmox/TFM-GameAnalytics.git
 cd TFM-GameAnalytics
-pip install -r requirements.txt
+
+# Para ejecutar los notebooks (pipeline completo)
+pip install -r requirements-dev.txt
+
+# Para ejecutar solo el dashboard (mucho más rápido)
+pip install -r dashboard/requirements.txt
 ```
 
 Copia `.env.example` a `.env` y rellena las credenciales:
@@ -92,7 +101,7 @@ Para la extracción de Firestore también necesitas `credentials/firebase-servic
 ### Dashboard interactivo
 
 ```bash
-streamlit run 09_dashboard.py
+streamlit run dashboard/09_dashboard.py
 ```
 
 El dashboard carga directamente desde `data/exports/` y `models/` — no requiere
