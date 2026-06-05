@@ -262,7 +262,7 @@ def generate_recommendations(balance_index: pd.DataFrame,
     ]
     kw_p = kw_row['p_value'].values[0] if len(kw_row) else 1.0
 
-    # Elemento con menor balance index
+    # Elemento con menor Puntuación Global
     worst = balance_index.iloc[-1]['playerElement'] if len(balance_index) else 'Wind'
     best  = balance_index.iloc[0]['playerElement']  if len(balance_index) else 'Fire'
 
