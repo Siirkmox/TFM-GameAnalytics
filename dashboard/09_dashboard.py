@@ -183,6 +183,43 @@ with st.sidebar:
         elem_sel = list(PALETTE.keys())
 
     st.divider()
+
+    # ── Modo administrador ────────────────────────────────────────────────────
+    # Protege acciones destructivas (escritura en CSV compartido) frente a visitantes anónimos.
+    # La password se lee de Streamlit Secrets en cloud o de .env en local.
+    def _admin_password() -> str:
+        import os
+        # En Streamlit Cloud
+        try:
+            if "ADMIN_PASSWORD" in st.secrets:
+                return st.secrets["ADMIN_PASSWORD"]
+        except Exception:
+            pass
+        # En local
+        from dotenv import load_dotenv
+        load_dotenv(REPO_ROOT / ".env")
+        return os.getenv("ADMIN_PASSWORD", "")
+
+    if "is_admin" not in st.session_state:
+        st.session_state.is_admin = False
+
+    with st.expander("🔒 Modo administrador"):
+        if st.session_state.is_admin:
+            st.success("Admin activo")
+            if st.button("Cerrar sesión admin", key="btn_admin_logout"):
+                st.session_state.is_admin = False
+                st.rerun()
+        else:
+            _pwd = st.text_input("Contraseña", type="password", key="admin_pwd_input")
+            if st.button("Acceder", key="btn_admin_login"):
+                _expected = _admin_password()
+                if _expected and _pwd == _expected:
+                    st.session_state.is_admin = True
+                    st.rerun()
+                else:
+                    st.error("Contraseña incorrecta")
+
+    st.divider()
     st.caption("Samuel Alcaraz Rodriguez · Game Balance Analytics")
 
 
@@ -1802,6 +1839,12 @@ with tab_recs:
         "recommendation": "Recomendación", "evidence": "Evidencia", "arreglado": "Arreglado",
     }
 
+    # En modo no-admin la columna "Arreglado" tambien queda deshabilitada para evitar persistencia anonima
+    _is_admin = st.session_state.get("is_admin", False)
+    _disabled_cols = [c for c in rename_rec.values() if c != "Arreglado"]
+    if not _is_admin:
+        _disabled_cols.append("Arreglado")
+
     _edited = st.data_editor(
         _recs_display.rename(columns=rename_rec),
         use_container_width=True, hide_index=True, height=600,
@@ -1816,17 +1859,18 @@ with tab_recs:
                 default=False, width=50,
             ),
         },
-        disabled=[c for c in rename_rec.values() if c != "Arreglado"],
+        disabled=_disabled_cols,
         key="recs_editor",
     )
 
-    # Guardar cambios en el CSV si el usuario marcó/desmarcó algún checkbox
-    _edited_back = _edited.rename(columns={v: k for k, v in rename_rec.items()})
-    if not _edited_back["arreglado"].equals(_recs_display["arreglado"]):
-        _recs_full = recs.copy()
-        _recs_full.loc[_recs_display.index, "arreglado"] = _edited_back["arreglado"].values
-        _recs_full.to_csv(EXPORTS / "balance_recommendations.csv", index=False)
-        st.toast("Cambios guardados en balance_recommendations.csv", icon="✅")
+    # Guardar cambios en el CSV solo si el usuario es admin y modifico algun checkbox
+    if _is_admin:
+        _edited_back = _edited.rename(columns={v: k for k, v in rename_rec.items()})
+        if not _edited_back["arreglado"].equals(_recs_display["arreglado"]):
+            _recs_full = recs.copy()
+            _recs_full.loc[_recs_display.index, "arreglado"] = _edited_back["arreglado"].values
+            _recs_full.to_csv(EXPORTS / "balance_recommendations.csv", index=False)
+            st.toast("Cambios guardados en balance_recommendations.csv", icon="✅")
 
     st.divider()
 
@@ -1934,8 +1978,13 @@ with tab_recs:
         _a_guardar = _edited_nuevas[_edited_nuevas["guardar"] == True].drop(columns=["guardar"])
         st.caption(f"{len(_a_guardar)} de {len(_edited_nuevas)} seleccionadas para guardar.")
 
+        # El guardado modifica el CSV compartido — restringido a admin para evitar spam en la demo pública
+        _can_save = st.session_state.get("is_admin", False)
+        if not _can_save:
+            st.info("🔒 Guardar requiere modo administrador (sidebar). En esta demo pública solo el autor puede modificar el CSV compartido.")
+
         if st.button("Guardar en CSV", key="btn_guardar_ai_recs", type="primary",
-                     disabled=len(_a_guardar) == 0):
+                     disabled=len(_a_guardar) == 0 or not _can_save):
             _a_guardar["arreglado"] = False
             _recs_actualizado = pd.concat(
                 [recs, _a_guardar], ignore_index=True
