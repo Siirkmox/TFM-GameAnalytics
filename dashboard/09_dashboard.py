@@ -405,7 +405,7 @@ with tab_resumen:
         "Gemini genera un resumen ejecutivo profesional basándose en la Puntuación Global, "
         "los tests estadísticos y las recomendaciones de alta prioridad."
     )
-    if st.button("📋 Generar resumen ejecutivo", key="btn_exec_summary", type="primary"):
+    if st.button("Generar resumen ejecutivo", key="btn_exec_summary", type="primary"):
         with st.spinner("Gemini redactando el resumen..."):
             try:
                 from analysis import generate_executive_summary
