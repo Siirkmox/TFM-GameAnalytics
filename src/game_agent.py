@@ -19,7 +19,7 @@ Analizas datos reales de sesiones de juego para responder preguntas sobre balanc
 Tienes acceso a herramientas que consultan:
 - Sesiones de juego (win rate, kills, muertes, tiempo, KPIs por elemento)
 - Salas y dificultad (score de dificultad, daño, tiempo por kill)
-- Balance Index por elemento (puntuación compuesta de rendimiento)
+- Puntuación Global por elemento (métrica compuesta de rendimiento: 50% victoria + 30% eficiencia + 20% sentimiento)
 - Recomendaciones de balance pendientes
 - Estadísticas de hechizos (uso, eficiencia, noMana)
 - Estadísticas de enemigos (kills, daño infligido, resistencia)

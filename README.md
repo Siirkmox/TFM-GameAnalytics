@@ -12,12 +12,12 @@ jugables (Fire, Water, Earth, Wind) y generar recomendaciones accionables para e
 
 ## Resultados principales
 
-| Elemento | Balance Index | Win Rate |
-|----------|--------------|---------|
-| Fire     | 0.5818       | 36%     |
-| Earth    | 0.5104       | 29%     |
-| Water    | 0.2111       | 22%     |
-| Wind     | 0.1289       | 14%     |
+| Elemento | Puntuación Global | Win Rate |
+|----------|-------------------|---------|
+| Fire     | 0.5818            | 36%     |
+| Earth    | 0.5104            | 29%     |
+| Water    | 0.2111            | 22%     |
+| Wind     | 0.1289            | 14%     |
 
 - **Win rate global:** 29.4% (n=34 sesiones limpias WebGL)
 - **Hechizo dominante:** Beam (1.12 kills/cast, ×8 sobre Projectile)
@@ -36,14 +36,14 @@ jugables (Fire, Water, Earth, Wind) y generar recomendaciones accionables para e
 │   ├── 04_statistics.ipynb       # Tests estadísticos (Kruskal-Wallis, Chi², Dunn)
 │   ├── 05_ml_predictor.ipynb     # ML: LR + RF + XGBoost + Optuna + K-Means
 │   ├── 06_nlp_comments.ipynb     # NLP: BERT multilingüe + TF-IDF/NMF + Gemini
-│   ├── 07_balance_analysis.ipynb # Balance Index + recomendaciones
+│   ├── 07_balance_analysis.ipynb # Puntuación Global + recomendaciones
 │   └── 08_report.ipynb           # Informe ejecutivo + exportación HTML
 ├── src/
 │   ├── firestore_client.py       # Cliente Firestore con JWT
 │   ├── preprocessing.py          # Aplanado + normalización + features
 │   ├── cleaning.py               # Validación, outliers, filtros
 │   ├── visualization.py          # Plots estandarizados (paleta por elemento)
-│   ├── analysis.py               # Balance Index + recomendaciones IA (Gemini)
+│   ├── analysis.py               # Puntuación Global + recomendaciones IA (Gemini)
 │   ├── nlp_utils.py              # Sentiment BERT + topic modeling + análisis Gemini
 │   ├── game_agent.py             # Agente LangGraph con 9 herramientas de consulta
 │   ├── game_tools.py             # Tools LangChain para el agente
@@ -133,7 +133,7 @@ al ejecutarse. También está disponible en el repositorio como artefacto precom
 | Estadística | Kruskal-Wallis, Chi², Dunn post-hoc, Mann-Kendall | `statistical_results.csv` |
 | ML | LR + RF + XGBoost + Optuna (50 trials) + K-Means (LOO) | Modelos `.pkl` |
 | NLP | BERT multilingüe (nlptown) + TF-IDF/NMF + Gemini | `nlp_results.csv` |
-| Balance | Balance Index ponderado (win_rate×0.5 + kills_eff×0.3 + sentiment×0.2) | `balance_index.csv` |
+| Balance | Puntuación Global ponderada (win_rate×0.5 + kills_eff×0.3 + sentiment×0.2) | `balance_index.csv` |
 | IA Generativa | Agente LangGraph + Gemini + 9 herramientas de consulta | Dashboard interactivo |
 
 ---

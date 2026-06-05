@@ -402,7 +402,7 @@ with tab_resumen:
     # ── Resumen ejecutivo con IA ───────────────────────────────────────────────
     st.subheader("🤖 Resumen ejecutivo generado por IA")
     st.caption(
-        "Gemini genera un resumen ejecutivo profesional basándose en el Balance Index, "
+        "Gemini genera un resumen ejecutivo profesional basándose en la Puntuación Global, "
         "los tests estadísticos y las recomendaciones de alta prioridad."
     )
     if st.button("📋 Generar resumen ejecutivo", key="btn_exec_summary", type="primary"):
@@ -1872,7 +1872,7 @@ with tab_recs:
     # ── Recomendaciones adicionales con IA ────────────────────────────────────
     st.subheader("Recomendaciones adicionales con IA")
     st.caption(
-        "Gemini analiza los datos del Balance Index, hechizos y salas para identificar "
+        "Gemini analiza los datos de Puntuación Global, hechizos y salas para identificar "
         "oportunidades de mejora adicionales no cubiertas por el análisis automático."
     )
 

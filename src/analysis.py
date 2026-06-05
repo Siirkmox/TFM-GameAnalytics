@@ -59,7 +59,11 @@ def compute_balance_index(df_sessions: pd.DataFrame,
                           nlp_results: pd.DataFrame,
                           df_rooms: pd.DataFrame = None) -> pd.DataFrame:
     """
-    Balance Index = 0.5 × win_rate + 0.3 × kills_efficiency_norm + 0.2 × sentiment_norm por elemento.
+    Puntuación Global = 0.5 × win_rate + 0.3 × kills_efficiency_norm + 0.2 × sentiment_norm por elemento.
+
+    Nota: la columna se llama 'puntuacion_global' en el CSV exportado. El término técnico
+    interno 'balance_index' se mantiene en parámetros y nombres de función para compatibilidad
+    con notebooks existentes.
 
     - win_rate           : proporción de isVictory por playerElement
     - kills_efficiency   : si df_rooms disponible, usa killedWith_* (eficiencia real);
@@ -265,11 +269,11 @@ def generate_recommendations(balance_index: pd.DataFrame,
     recs.append({
         'element': worst,
         'area': 'element_balance',
-        'finding': f'{worst} tiene el Balance Index más bajo del dataset',
+        'finding': f'{worst} tiene la Puntuación Global más baja del dataset',
         'recommendation': f'Investigar si {worst} tiene mecánicas únicas que dificultan su uso. '
                           f'Comparar kit de hechizos con {best} y ajustar si hay asimetría injustificada.',
         'priority': 'Media' if kw_p >= 0.05 else 'Alta',
-        'evidence': f'Balance Index: {worst} = {balance_index.iloc[-1]["balance_index"]:.4f}; '
+        'evidence': f'Puntuación Global: {worst} = {balance_index.iloc[-1]["balance_index"]:.4f}; '
                     f'Kruskal-Wallis kills_per_min p={kw_p:.3f}',
     })
 
@@ -359,7 +363,7 @@ def generate_ai_recommendations(balance_index: pd.DataFrame,
 Tienes datos analíticos del juego "Arcane Descent" con 4 elementos jugables (Fire, Water, Earth, Wind).
 El dataset tiene ~34 sesiones limpias — los resultados son orientativos, no estadísticamente definitivos.
 
-## BALANCE INDEX POR ELEMENTO:
+## PUNTUACIÓN GLOBAL POR ELEMENTO:
 {bi_str}
 
 ## TESTS ESTADÍSTICOS SIGNIFICATIVOS (p < 0.1):
@@ -442,7 +446,7 @@ Debes escribir un resumen ejecutivo profesional para el equipo de desarrollo (Ga
 - Elemento más equilibrado: {best_elem}
 - Elemento con mayor margen de mejora: {worst_elem}
 
-## BALANCE INDEX FINAL (métrica compuesta):
+## PUNTUACIÓN GLOBAL FINAL (métrica compuesta por elemento):
 {bi_str}
 
 ## RECOMENDACIONES DE ALTA PRIORIDAD:

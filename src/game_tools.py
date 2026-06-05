@@ -110,7 +110,7 @@ def consultar_dificultad_salas(top_n: int = 10) -> str:
 @tool
 def consultar_balance_index() -> str:
     """
-    Devuelve el Balance Index (puntuacion_global) de cada elemento.
+    Devuelve la Puntuación Global de cada elemento.
     Combina win_rate (50%), kills_efficiency (30%) y sentiment_score (20%).
     Incluye si los datos son suficientes (n>=10 sesiones).
     """
