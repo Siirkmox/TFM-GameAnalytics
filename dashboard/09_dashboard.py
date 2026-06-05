@@ -199,7 +199,7 @@ tab_resumen, tab_elem, tab_spells, tab_salas, tab_ml, tab_feedback, tab_recs, ta
 with tab_resumen:
     st.header("Resumen Ejecutivo")
     st.caption(
-        f"Prototipo v0.1 · {n_clean} sesiones WebGL válidas de {n_total} registradas · "
+        f"{n_clean} sesiones WebGL válidas de {n_total} registradas · "
         "Resultados orientativos — se requieren ≥30 sesiones por elemento para validación estadística robusta."
     )
 
