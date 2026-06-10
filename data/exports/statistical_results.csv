@@ -1,32 +1,32 @@
 test,variable,statistic,p_value,p_bonferroni,effect_size,interpretation,tipo
-Shapiro-Wilk,kd_ratio,0.8368,0.0001,,,No normal,normalidad
-Shapiro-Wilk,kills_per_min,0.8963,0.0031,,,No normal,normalidad
-Shapiro-Wilk,cast_accuracy,0.8954,0.003,,,No normal,normalidad
-Shapiro-Wilk,totalDeaths,0.7279,0.0,,,No normal,normalidad
-Shapiro-Wilk,levelsCompleted,0.8615,0.0004,,,No normal,normalidad
-Kruskal-Wallis,kd_ratio,0.4325,0.9335,,0.0,Sin diferencia significativa,diferencia_elementos
-Kruskal-Wallis,kills_per_min,10.0935,0.0178,,0.2288,Diferencia significativa,diferencia_elementos
-Kruskal-Wallis,cast_accuracy,5.1577,0.1606,,0.0696,Sin diferencia significativa,diferencia_elementos
-Kruskal-Wallis,totalDeaths,2.9596,0.3979,,0.0,Sin diferencia significativa,diferencia_elementos
-Kruskal-Wallis,levelsCompleted,1.2139,0.7497,,0.0,Sin diferencia significativa,diferencia_elementos
-Spearman,kd_ratio vs isVictory,0.746,0.0,0.0,0.746,Significativa (Bonferroni),causal
-Spearman,kills_per_min vs isVictory,0.4384,0.0084,0.1181,0.4384,Significativa (sin ajuste),causal
-Spearman,cast_accuracy vs isVictory,0.2505,0.1467,1.0,0.2505,No significativa,causal
-Spearman,totalDeaths vs isVictory,-0.1727,0.3212,1.0,0.1727,No significativa,causal
-Spearman,completion_rate vs isVictory,0.4712,0.0043,0.0598,0.4712,Significativa (sin ajuste),causal
-Spearman,total_blocked vs isVictory,0.5012,0.0022,0.0303,0.5012,Significativa (Bonferroni),causal
-Spearman,cast_accuracy_Projectile vs isVictory,0.2505,0.1467,1.0,0.2505,No significativa,causal
-Spearman,cast_accuracy_AOE vs isVictory,0.1544,0.4152,1.0,0.1544,No significativa,causal
-Spearman,status_Burn vs isVictory,0.2206,0.2029,1.0,0.2206,No significativa,causal
-Spearman,status_Stun vs isVictory,0.2106,0.2246,1.0,0.2106,No significativa,causal
-Spearman,status_Slow vs isVictory,-0.0326,0.8525,1.0,0.0326,No significativa,causal
-Spearman,status_Knockback vs isVictory,-0.2267,0.1904,1.0,0.2267,No significativa,causal
-Spearman,levelsCompleted vs isVictory,0.8051,0.0,0.0,0.8051,Significativa (Bonferroni),SALIDA
-Spearman,totalRooms vs isVictory,0.7897,0.0,0.0,0.7897,Significativa (Bonferroni),SALIDA
-Chi-squared,isVictory x playerElement,2.2176,0.5285,,0.2517,Sin asociación significativa,asociacion
-Mann-Kendall,kd_ratio,-108.0,0.128,,-0.1815,no trend,tendencia_temporal
-Mann-Kendall,kills_per_min,-1.0,1.0,,-0.0017,no trend,tendencia_temporal
-Mann-Kendall,totalDeaths,267.0,0.0,,0.4487,increasing,tendencia_temporal
+Shapiro-Wilk,kd_ratio,0.8334,0.0,,,No normal,normalidad
+Shapiro-Wilk,kills_per_min,0.9242,0.0118,,,No normal,normalidad
+Shapiro-Wilk,cast_accuracy,0.8924,0.0013,,,No normal,normalidad
+Shapiro-Wilk,totalDeaths,0.7403,0.0,,,No normal,normalidad
+Shapiro-Wilk,levelsCompleted,0.8498,0.0001,,,No normal,normalidad
+Kruskal-Wallis,kd_ratio,0.3213,0.956,,0.0,Sin diferencia significativa,diferencia_elementos
+Kruskal-Wallis,kills_per_min,7.9209,0.0477,,0.1406,Diferencia significativa,diferencia_elementos
+Kruskal-Wallis,cast_accuracy,5.4611,0.141,,0.0703,Sin diferencia significativa,diferencia_elementos
+Kruskal-Wallis,totalDeaths,2.0562,0.5608,,0.0,Sin diferencia significativa,diferencia_elementos
+Kruskal-Wallis,levelsCompleted,1.277,0.7346,,0.0,Sin diferencia significativa,diferencia_elementos
+Spearman,kd_ratio vs isVictory,0.7418,0.0,0.0,0.7418,Significativa (Bonferroni),causal
+Spearman,kills_per_min vs isVictory,0.4245,0.0071,0.099,0.4245,Significativa (sin ajuste),causal
+Spearman,cast_accuracy vs isVictory,0.2912,0.072,1.0,0.2912,No significativa,causal
+Spearman,totalDeaths vs isVictory,-0.0193,0.907,1.0,0.0193,No significativa,causal
+Spearman,completion_rate vs isVictory,0.5096,0.0009,0.0129,0.5096,Significativa (Bonferroni),causal
+Spearman,total_blocked vs isVictory,0.3262,0.0427,0.5976,0.3262,Significativa (sin ajuste),causal
+Spearman,cast_accuracy_Projectile vs isVictory,0.2666,0.1009,1.0,0.2666,No significativa,causal
+Spearman,cast_accuracy_AOE vs isVictory,0.1789,0.3113,1.0,0.1789,No significativa,causal
+Spearman,status_Burn vs isVictory,0.1617,0.3255,1.0,0.1617,No significativa,causal
+Spearman,status_Stun vs isVictory,0.1259,0.445,1.0,0.1259,No significativa,causal
+Spearman,status_Slow vs isVictory,0.0515,0.7557,1.0,0.0515,No significativa,causal
+Spearman,status_Knockback vs isVictory,-0.1101,0.5048,1.0,0.1101,No significativa,causal
+Spearman,levelsCompleted vs isVictory,0.8243,0.0,0.0,0.8243,Significativa (Bonferroni),SALIDA
+Spearman,totalRooms vs isVictory,0.8088,0.0,0.0,0.8088,Significativa (Bonferroni),SALIDA
+Chi-squared,isVictory x playerElement,0.879,0.8305,,0.1501,Sin asociación significativa,asociacion
+Mann-Kendall,kd_ratio,-103.0,0.2162,,-0.139,no trend,tendencia_temporal
+Mann-Kendall,kills_per_min,87.0,0.2982,,0.1174,no trend,tendencia_temporal
+Mann-Kendall,totalDeaths,279.0,0.0002,,0.3765,increasing,tendencia_temporal
 chi2_spell_victory,dominant_spell x isVictory,0.0,1.0,,,No significativo,asociacion
-spearman_attempt_deaths,attempt vs deaths (global niveles),0.1584,0.1605,,,Sin patron claro,correlacion
-spearman_timesecs_deaths_sala,timeSecs sala vs deaths sala,0.0235,0.5981,,,No significativo,correlacion
+spearman_attempt_deaths,attempt vs deaths (global niveles),0.1732,0.1045,,,Sin patron claro,correlacion
+spearman_timesecs_deaths_sala,timeSecs sala vs deaths sala,0.0228,0.5874,,,No significativo,correlacion
