@@ -241,15 +241,19 @@ with tab_resumen:
     )
 
     # KPIs principales
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("Sesiones válidas (WebGL)", n_clean, delta=f"de {n_total} registradas", delta_color="off")
     c2.metric("Tasa de victoria global", f"{wr_global:.0%}",
               help="Victorias / sesiones válidas. Referencia saludable para prototipo: 20-40%.")
-    c3.metric("Recomendaciones de alta prioridad",
+    # Progreso medio del juego = media de game_completion (salas visitadas / 24 salas totales)
+    _game_compl_avg = clean["game_completion"].mean() if "game_completion" in clean.columns else 0
+    c3.metric("Progreso medio del juego", f"{_game_compl_avg:.0%}",
+              help="Media de salas visitadas por sesión sobre las 24 salas totales del juego completo (Level1=5, Level2=6, Level3=7, Level4=6).")
+    c4.metric("Recomendaciones de alta prioridad",
               int((recs["priority"] == "Alta").sum()),
               help="Acciones inmediatas identificadas en el análisis.")
     best_elem = bi.sort_values("puntuacion_global", ascending=False).iloc[0]
-    c4.metric("Elemento mejor balanceado",
+    c5.metric("Elemento mejor balanceado",
               best_elem["playerElement"],
               delta=f"Puntuación = {best_elem['puntuacion_global']:.3f}",
               help="Puntuación global: combina tasa de victoria, eficiencia de kills y sentimiento del jugador.")

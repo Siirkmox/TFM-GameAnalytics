@@ -190,7 +190,8 @@ def add_session_features(df_sessions: pd.DataFrame, df_levels: pd.DataFrame,
       - time_per_level     : totalTimeSecs / max(levelsCompleted, 1)
       - kills_per_min      : totalKills / (totalTimeSecs / 60)
       - level_finish_rate  : levelsCompleted / niveles intentados en la sesión (mide abandono dentro de un nivel)
-      - game_completion    : levelsCompleted / 4 (% del juego completado — el juego tiene 4 niveles totales)
+      - game_completion    : totalRooms / 24 (% del juego completado — el juego tiene 24 salas totales,
+                             granularidad mas fina que por niveles)
       - total_cast         : suma de todos los cast_X en salas de la sesión
       - total_rooms        : número de salas visitadas en la sesión
     """
@@ -210,10 +211,17 @@ def add_session_features(df_sessions: pd.DataFrame, df_levels: pd.DataFrame,
     # No mide '% del juego completado' — solo mide abandono dentro de un nivel iniciado.
     df['level_finish_rate'] = df['levelsCompleted'] / df['totalLevels'].clip(lower=1)
 
-    # game_completion: '% del juego completado' sobre los 4 niveles totales del juego.
-    # Esta es la metrica que normalmente se entiende por 'porcentaje del juego completado'.
-    GAME_TOTAL_LEVELS = 4
-    df['game_completion'] = df['levelsCompleted'] / GAME_TOTAL_LEVELS
+    # Total de salas visitadas (lo necesitamos antes para game_completion)
+    rooms_per_session_for_completion = df_rooms.groupby('sessionId').size().rename('_totalRooms_tmp')
+    df = df.merge(rooms_per_session_for_completion, on='sessionId', how='left')
+    df['_totalRooms_tmp'] = df['_totalRooms_tmp'].fillna(0).astype(int)
+
+    # game_completion: '% del juego completado' por salas (granularidad mas fina que por niveles).
+    # El juego completo tiene 24 salas totales: Level1=5, Level2=6, Level3=7, Level4=6.
+    # Una sesion victoriosa visita las 24. Algunas alcanzan 25 por sala bonus ocasional -> cap a 1.0.
+    GAME_TOTAL_ROOMS = 24
+    df['game_completion'] = (df['_totalRooms_tmp'] / GAME_TOTAL_ROOMS).clip(upper=1.0)
+    df = df.drop(columns=['_totalRooms_tmp'])
 
     # Alias mantenido por compatibilidad con notebooks existentes — DEPRECATED.
     df['completion_rate'] = df['level_finish_rate']
