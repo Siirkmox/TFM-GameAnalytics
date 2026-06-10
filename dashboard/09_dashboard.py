@@ -293,6 +293,8 @@ with tab_resumen:
         "Elemento": _grp["sessionId"].nunique().index,
         "Sesiones": _grp["sessionId"].nunique().values,
         "Victoria": _grp["isVictory"].mean().values,
+        # Progreso medio del juego por elemento (game_completion = totalRooms / 24)
+        "Progreso juego": _grp["game_completion"].mean().values if "game_completion" in _clean_f.columns else 0,
     }).reset_index(drop=True)
 
     # kills_per_min normalizado
@@ -331,11 +333,12 @@ with tab_resumen:
     _bi_live["Fiable"] = _bi_live["Sesiones"].apply(lambda n: "✅" if n >= 10 else "⚠️")
     _bi_live = _bi_live.sort_values("Puntuación global", ascending=False)
     _bi_live["Victoria"]             = _bi_live["Victoria"].map("{:.0%}".format)
+    _bi_live["Progreso juego"]       = _bi_live["Progreso juego"].map("{:.0%}".format)
     _bi_live["Kills/min (norm.)"]    = _bi_live["Kills/min (norm.)"].map("{:.3f}".format)
     _bi_live["Control rol (norm.)"]  = _bi_live["Control rol (norm.)"].map("{:.3f}".format)
     _bi_live["Sentimiento"]          = _bi_live["Sentimiento"].map("{:.2f}".format)
     _bi_live["Puntuación global"]    = _bi_live["Puntuación global"].map("{:.3f}".format)
-    _bi_live = _bi_live[["Elemento","Sesiones","Victoria","Kills/min (norm.)","Sentimiento","Puntuación global","Fiable"]]
+    _bi_live = _bi_live[["Elemento","Sesiones","Victoria","Progreso juego","Kills/min (norm.)","Sentimiento","Puntuación global","Fiable"]]
     st.dataframe(_bi_live, use_container_width=True, hide_index=True, height=230)
     st.caption("⚠️ = n<10 sesiones · Control rol: Fire=Burn, Water=Slow, Earth=Stun, Wind=Knockback — aplicaciones de status / kills totales (norm.)")
 
@@ -729,6 +732,51 @@ with tab_elem:
 ({_best_churn['tasa']:.0%} de abandono).<br><br>
 Una tasa alta puede indicar que el elemento resulta frustrante o difícil de aprender
 desde el inicio — candidato prioritario para revisión de onboarding.
+</div>""", unsafe_allow_html=True)
+
+        # ── Fila: distribucion del progreso del juego ─────────────────────────
+        st.divider()
+        st.subheader("Distribución del progreso del juego")
+        st.caption(
+            "Histograma de `game_completion` (salas visitadas / 24 salas totales) por sesion y elemento. "
+            "Permite ver donde se atascan los jugadores: si la masa esta en 0.2-0.4 abandonan pronto, "
+            "si esta en 0.8-1.0 llegan al final."
+        )
+
+        _gc_data = clean[clean["playerElement"].isin(elem_sel)].copy()
+        if "game_completion" in _gc_data.columns and not _gc_data.empty:
+            fig_gc = px.histogram(
+                _gc_data, x="game_completion", color="playerElement",
+                color_discrete_map=PALETTE, nbins=12,
+                labels={"game_completion": "Progreso del juego", "count": "Sesiones"},
+                opacity=0.75,
+            )
+            fig_gc.update_xaxes(tickformat=".0%", range=[0, 1.05])
+            fig_gc.update_layout(
+                height=340, barmode="stack",
+                legend_title_text="Elemento",
+                margin=dict(t=20, b=20),
+                hovermode="x unified",
+            )
+            _gc_col, _gc_gap, _gc_txt = st.columns([10, 1, 10])
+            _gc_col.plotly_chart(fig_gc, use_container_width=True)
+
+            # Resumen dinamico al lado del histograma
+            _gc_agg = _gc_data.groupby("playerElement")["game_completion"].agg(["mean","count"]).reset_index()
+            _gc_agg = _gc_agg.sort_values("mean", ascending=False)
+            _gc_best  = _gc_agg.iloc[0]
+            _gc_worst = _gc_agg.iloc[-1]
+            _gc_total = _gc_data["game_completion"].mean()
+            _gc_zero  = (_gc_data["game_completion"] <= 0.25).sum()
+            _gc_full  = (_gc_data["game_completion"] >= 0.99).sum()
+            _gc_txt.markdown("<div style='height:40px'></div>", unsafe_allow_html=True)
+            _gc_txt.markdown(f"""
+<div class='card-obs' style='font-size:0.92em;line-height:1.8'>
+Progreso medio del jugador: <b>{_gc_total:.0%}</b> del juego (≈{_gc_total*24:.0f} salas de 24).<br><br>
+<b>{_gc_best['playerElement']}</b> es el que mas avanza ({_gc_best['mean']:.0%}),
+<b>{_gc_worst['playerElement']}</b> el que menos ({_gc_worst['mean']:.0%}).<br><br>
+<b>{_gc_zero}</b> sesiones abandonaron muy pronto (≤25% del juego) y
+<b>{_gc_full}</b> completaron el juego entero.
 </div>""", unsafe_allow_html=True)
 
 
