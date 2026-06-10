@@ -1540,7 +1540,7 @@ with tab_ml:
     # Variables más importantes — tabla de correlaciones
     st.subheader("Variables estadísticamente asociadas a la victoria")
     st.caption("Correlación Spearman entre cada variable y ganar la partida. Solo variables con p<0.05.")
-    _output_vars = ["levelsCompleted", "totalRooms", "completion_rate"]
+    _output_vars = ["levelsCompleted", "totalRooms", "completion_rate", "level_finish_rate", "game_completion"]
     spear = stat[
         (stat["test"] == "Spearman") &
         (stat["variable"].str.contains("isVictory")) &

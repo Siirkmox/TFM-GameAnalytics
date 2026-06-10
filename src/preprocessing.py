@@ -189,7 +189,8 @@ def add_session_features(df_sessions: pd.DataFrame, df_levels: pd.DataFrame,
       - kd_ratio           : kills / max(deaths, 1)
       - time_per_level     : totalTimeSecs / max(levelsCompleted, 1)
       - kills_per_min      : totalKills / (totalTimeSecs / 60)
-      - completion_rate    : levelsCompleted / nº niveles totales de la sesión
+      - level_finish_rate  : levelsCompleted / niveles intentados en la sesión (mide abandono dentro de un nivel)
+      - game_completion    : levelsCompleted / 4 (% del juego completado — el juego tiene 4 niveles totales)
       - total_cast         : suma de todos los cast_X en salas de la sesión
       - total_rooms        : número de salas visitadas en la sesión
     """
@@ -204,7 +205,18 @@ def add_session_features(df_sessions: pd.DataFrame, df_levels: pd.DataFrame,
     levels_per_session = df_levels.groupby('sessionId').size().rename('totalLevels')
     df = df.merge(levels_per_session, on='sessionId', how='left')
     df['totalLevels']    = df['totalLevels'].fillna(0).astype(int)
-    df['completion_rate'] = df['levelsCompleted'] / df['totalLevels'].clip(lower=1)
+
+    # level_finish_rate: de los niveles que intento, cuantos termino (antes se llamaba completion_rate)
+    # No mide '% del juego completado' — solo mide abandono dentro de un nivel iniciado.
+    df['level_finish_rate'] = df['levelsCompleted'] / df['totalLevels'].clip(lower=1)
+
+    # game_completion: '% del juego completado' sobre los 4 niveles totales del juego.
+    # Esta es la metrica que normalmente se entiende por 'porcentaje del juego completado'.
+    GAME_TOTAL_LEVELS = 4
+    df['game_completion'] = df['levelsCompleted'] / GAME_TOTAL_LEVELS
+
+    # Alias mantenido por compatibilidad con notebooks existentes — DEPRECATED.
+    df['completion_rate'] = df['level_finish_rate']
 
     # Total de salas visitadas
     rooms_per_session = df_rooms.groupby('sessionId').size().rename('totalRooms')
