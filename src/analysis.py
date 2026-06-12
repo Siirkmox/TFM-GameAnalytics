@@ -340,6 +340,12 @@ def generate_ai_recommendations(balance_index: pd.DataFrame,
 
     bi_str = balance_index.to_string(index=False) if balance_index is not None else 'No disponible'
 
+    # n_sesiones dinamico desde el balance_index para que el prompt nunca quede desfasado
+    if balance_index is not None and 'n_sessions' in balance_index.columns:
+        n_total_dinamico = int(balance_index['n_sessions'].sum())
+    else:
+        n_total_dinamico = None
+
     stat_relevantes = statistical_results[statistical_results['p_value'] < 0.1] \
         if statistical_results is not None and 'p_value' in statistical_results.columns \
         else statistical_results
@@ -359,9 +365,15 @@ def generate_ai_recommendations(balance_index: pd.DataFrame,
             )
         existing_str = '\n'.join(lines)
 
+    linea_dataset = (
+        f'El dataset tiene {n_total_dinamico} sesiones limpias — los resultados son orientativos, no estadísticamente definitivos.'
+        if n_total_dinamico is not None
+        else 'El dataset es pequeno — los resultados son orientativos, no estadísticamente definitivos.'
+    )
+
     prompt = f"""Eres un Game Designer experto en balance de videojuegos de tipo Hack & Slash.
 Tienes datos analíticos del juego "Arcane Descent" con 4 elementos jugables (Fire, Water, Earth, Wind).
-El dataset tiene ~34 sesiones limpias — los resultados son orientativos, no estadísticamente definitivos.
+{linea_dataset}
 
 ## PUNTUACIÓN GLOBAL POR ELEMENTO:
 {bi_str}

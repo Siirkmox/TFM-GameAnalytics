@@ -2,6 +2,9 @@
 game_agent.py — Agente LangGraph para análisis de balance del juego Arcane Descent.
 Patrón basado en agents/graph.py del Proyecto 7 (IAGenerativa).
 """
+from pathlib import Path
+
+import pandas as pd
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from langgraph.graph import END, StateGraph
 from langgraph.prebuilt import ToolNode
@@ -9,8 +12,62 @@ from langgraph.prebuilt import ToolNode
 from gemini_client import get_llm_for_agent
 from game_tools import ALL_TOOLS
 
-# ── System prompt del agente ──────────────────────────────────────────────────
-SYSTEM_PROMPT = """Eres un experto en análisis de balance de videojuegos especializado en el juego Arcane Descent, un Hack & Slash con 4 elementos jugables: Fire, Water, Earth y Wind.
+
+def _stats_actuales() -> dict:
+    """
+    Lee el tamano de muestra y la distribucion por elemento desde el parquet
+    para que el system prompt nunca quede desfasado al anadir mas sesiones.
+    Devuelve un dict con: n_total, elementos_suficientes (n>=10) y elementos_insuficientes (n<10).
+    """
+    try:
+        repo_root = Path(__file__).resolve().parent.parent
+        parquet_path = repo_root / "data" / "processed" / "sessions.parquet"
+        df = pd.read_parquet(parquet_path)
+        if "is_suspicious" in df.columns:
+            df = df[~df["is_suspicious"]]
+        n_total = len(df)
+        if "playerElement" in df.columns:
+            counts = df.groupby("playerElement")["sessionId"].nunique().to_dict()
+        else:
+            counts = {}
+        suficientes = [e for e, n in counts.items() if n >= 10]
+        insuficientes = [(e, n) for e, n in counts.items() if n < 10]
+        return {
+            "n_total": n_total,
+            "suficientes": suficientes,
+            "insuficientes": insuficientes,
+        }
+    except Exception:
+        # Si algo falla, no rompemos el agente — devolvemos None y el prompt usa fallback genérico.
+        return {"n_total": None, "suficientes": [], "insuficientes": []}
+
+
+def _construir_system_prompt() -> str:
+    """Construye el system prompt con el tamano de muestra dinamico."""
+    stats = _stats_actuales()
+    n_total = stats["n_total"]
+    suf = stats["suficientes"]
+    insuf = stats["insuficientes"]
+
+    # Linea de limitaciones dinamica
+    if n_total is not None and n_total > 0:
+        linea_n = f"- Dataset actual: n={n_total} sesiones limpias — los resultados son orientativos."
+        if suf and insuf:
+            insuf_str = ", ".join(f"{e} (n={n})" for e, n in insuf)
+            suf_str = ", ".join(suf)
+            linea_suf = f"- Elementos con muestra suficiente (n>=10): {suf_str}. Elementos con muestra insuficiente: {insuf_str}."
+        elif suf and not insuf:
+            linea_suf = f"- Todos los elementos tienen muestra suficiente (n>=10): {', '.join(suf)}."
+        elif insuf and not suf:
+            insuf_str = ", ".join(f"{e} (n={n})" for e, n in insuf)
+            linea_suf = f"- Ningun elemento alcanza n>=10. Detalle: {insuf_str}."
+        else:
+            linea_suf = "- No se ha podido determinar la distribucion por elemento."
+    else:
+        linea_n = "- Dataset pequeno — los resultados son orientativos."
+        linea_suf = "- Consulta consultar_kpis_por_elemento para conocer el tamano de muestra por elemento."
+
+    return f"""Eres un experto en análisis de balance de videojuegos especializado en el juego Arcane Descent, un Hack & Slash con 4 elementos jugables: Fire, Water, Earth y Wind.
 
 ## TU ROL
 Analizas datos reales de sesiones de juego para responder preguntas sobre balance, dificultad, rendimiento de elementos y hechizos, y proponer recomendaciones accionables para el equipo de desarrollo Unity.
@@ -34,14 +91,17 @@ Tienes acceso a herramientas que consultan:
 5. Si la pregunta es muy amplia, estructura la respuesta con secciones claras.
 
 ## LIMITACIONES A MENCIONAR
-- Dataset pequeño: n=34 sesiones limpias — los resultados son orientativos.
-- Solo Fire tiene n≥10 sesiones; Earth, Water y Wind tienen n<10.
+{linea_n}
+{linea_suf}
 - Los bugs de telemetría ya corregidos en Unity afectan a sesiones históricas.
 
 ## TONO
 Técnico pero claro. Directo. Usa bullets y negritas para facilitar la lectura.
 Responde siempre en español.
 """
+
+
+SYSTEM_PROMPT = _construir_system_prompt()
 
 # ── Estado del grafo ──────────────────────────────────────────────────────────
 from typing import Annotated, TypedDict
