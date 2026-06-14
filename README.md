@@ -18,6 +18,7 @@
 |---|---|
 | 📊 **Dashboard interactivo** | [tfm-gameanalytics.streamlit.app](https://tfm-gameanalytics.streamlit.app) |
 | 🎮 **Juega al juego** | [sirkmox.itch.io/arcanedescent](https://sirkmox.itch.io/arcanedescent) |
+| 🎬 **Vídeo presentación** | [youtu.be/hWDR8Z1O5Gw](https://youtu.be/hWDR8Z1O5Gw) |
 | 📑 **Informe HTML** | [reports/balance_report.html](reports/balance_report.html) |
 
 ---
